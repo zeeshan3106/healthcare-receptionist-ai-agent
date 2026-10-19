@@ -52,32 +52,80 @@ function  AISearch() {
   }
 const [response,setres]=useState('')
 
-  const submit = () =>{
-     setres('')
-      setLoading(true);
-  setSuccess(false);
-    axios.post('https://jobs-search-keywords-eight.vercel.app/api/form/form-post',{
-    product: apple
-  }).then(res => res).catch(err => err)
-    axios.post('https://healthcare-receptionist-ai-agent-ba-nu.vercel.app/Agent',apple).then(res =>
-      {
+  // const submit = () =>{
+  //    setres('')
+  //     setLoading(true);
+  // setSuccess(false);
+  //   axios.post('https://jobs-search-keywords-eight.vercel.app/api/form/form-post',{
+  //   product: apple
+  // }).then(res => res).catch(err => err)
+  //   axios.post('http://127.0.0.1:8000/Agent',apple).then(res =>
+  //     {
 
-        setres({})
+  //       setres({})
         
-      setres(res.data.res)
-         setLoading(false);
-        setSuccess(true);
+  //     setres(res.data)
+  //        setLoading(false);
+  //       setSuccess(true);
       
 
 
-      }).catch(err =>{ 
-            console.error('SERVER:', err.response?.data)
-               setLoading(false)
-               toast.error("Enter a company, skill, or keyword...")
+  //     }).catch(err =>{ 
+  //           console.error('SERVER:', err.response?.data)
+  //              setLoading(false)
+  //              toast.error("Enter a company, skill, or keyword...")
     
-      })
-  }
+  //     })
+  // }
 
+  const submit = async () => {
+  setres('');
+  setLoading(true);
+  setSuccess(false);
+
+  try {
+    const response = await fetch('https://restaurant-ai-agent-nine.vercel.app/Agent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(apple),
+    });
+
+    if (!response.ok) {
+      throw new Error('Server request failed');
+    }
+
+    if (!response.body) {
+      throw new Error('Streaming response is unavailable');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { value, done } = await reader.read();
+
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+
+      setres(prev => prev + chunk);
+    }
+
+    const remaining = decoder.decode();
+    if (remaining) {
+      setres(prev => prev + remaining);
+    }
+
+    setSuccess(true);
+  } catch (err) {
+    console.error('SERVER:', err);
+    toast.error('Unable to get a response from the server.');
+  } finally {
+    setLoading(false);
+  }
+};
 console.log(apple)
 
 
@@ -103,7 +151,7 @@ const [loading, setLoading] = React.useState(false);
       <div className='bg-white w-[80%] middle shadow '>
     <div className='apple flex items-center justify-center pt-15 pb-5 mobile'>
       <div className='flex '>
-        MTHC Reception
+        Restaurant Agent
 
       </div>
     
