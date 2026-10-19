@@ -64,7 +64,7 @@ const [response,setres]=useState('')
 
         setres({})
         
-      setres(res.data)
+      setres(res.data.res)
          setLoading(false);
         setSuccess(true);
       
